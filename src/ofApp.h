@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxDelaunay.h"
+#include "ofxGui.h"
 
 class ofApp : public ofBaseApp{
 
@@ -23,4 +24,11 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 		
     ofxDelaunay triangulation;
+    
+    // gui
+    ofxPanel panel;
+    ofParameter<bool> showDelaunayBackground;
+    ofParameter<bool> showDelaunayWireframe;
+    ofParameter<bool> showDelaunayVertices;
+    ofParameter<bool> showDelaunayCenter;
 };

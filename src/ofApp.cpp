@@ -10,6 +10,13 @@ void ofApp::setup(){
         triangulation.addPoint(ofPoint(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight())));
     }
     triangulation.triangulate();
+    
+    // gui
+    panel.setup();
+    panel.add(showDelaunayBackground.set("showDelaunayBackground", true));
+    panel.add(showDelaunayWireframe.set("showDelaunayWireframe", true));
+    panel.add(showDelaunayVertices.set("showDelaunayVertices", true));
+    panel.add(showDelaunayCenter.set("showDelaunayCenter", true));
 }
 
 //--------------------------------------------------------------
@@ -20,40 +27,54 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     // draw the background of triangles
-    ofSetColor(0, 0, 127);
-    ofFill();
-    triangulation.draw();
+    if (showDelaunayBackground) {
+        ofSetColor(0, 0, 127);
+        ofFill();
+        triangulation.draw();
+        ofSetColor(255);
+    }
 
     // draw wire frame of triangles
-    ofNoFill();
-    ofSetColor(255);
-    triangulation.draw();
+    if (showDelaunayWireframe) {
+        ofNoFill();
+        ofSetColor(255);
+        triangulation.draw();
+        ofFill();
+    }
     
     // draw vertices of triangles
-    ofFill();
-    glPointSize(10.0);
-    ofSetColor(255, 0, 0, 255);
-    ofMesh mesh = triangulation.triangleMesh;
-    mesh.setMode(OF_PRIMITIVE_POINTS);
-    mesh.draw();
-    glPointSize(1.0);
+    if (showDelaunayVertices) {
+        ofFill();
+        glPointSize(10.0);
+        ofSetColor(255, 0, 0, 255);
+        ofMesh mesh = triangulation.triangleMesh;
+        mesh.setMode(OF_PRIMITIVE_POINTS);
+        mesh.draw();
+        glPointSize(1.0);
+        ofSetColor(255);
+    }
 
     // draw centers of the mesh
-    ofSetColor(0, 255, 0, 255);
-    for (int i = 0; i < triangulation.getNumTriangles(); i++) {
-        int index1 = triangulation.triangleMesh.getIndex(i*3);
-        int index2 = triangulation.triangleMesh.getIndex(i*3+1);
-        int index3 = triangulation.triangleMesh.getIndex(i*3+2);
-        
-        ofVec3f vertex1 = triangulation.triangleMesh.getVertex(index1);
-        ofVec3f vertex2 = triangulation.triangleMesh.getVertex(index2);
-        ofVec3f vertex3 = triangulation.triangleMesh.getVertex(index3);
-        
-        ofVec3f center = (vertex1+vertex2+vertex3)/3.0;
-        
-        ofDrawCircle(center, 5);
+    if (showDelaunayCenter) {
+        ofSetColor(0, 255, 0, 255);
+        for (int i = 0; i < triangulation.getNumTriangles(); i++) {
+            int index1 = triangulation.triangleMesh.getIndex(i*3);
+            int index2 = triangulation.triangleMesh.getIndex(i*3+1);
+            int index3 = triangulation.triangleMesh.getIndex(i*3+2);
+            
+            ofVec3f vertex1 = triangulation.triangleMesh.getVertex(index1);
+            ofVec3f vertex2 = triangulation.triangleMesh.getVertex(index2);
+            ofVec3f vertex3 = triangulation.triangleMesh.getVertex(index3);
+            
+            ofVec3f center = (vertex1+vertex2+vertex3)/3.0;
+            
+            ofDrawCircle(center, 5);
+        }
+        ofSetColor(255);
     }
-    ofSetColor(255);
+    
+    // gui
+    panel.draw();
     
     // debug
     ofDrawBitmapString("'r' to reset", ofPoint(10,20));
