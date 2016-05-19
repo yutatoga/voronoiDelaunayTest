@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxDelaunay.h"
 #include "ofxGui.h"
+#include "ofxVoronoi.h"
 
 class ofApp : public ofBaseApp{
 
@@ -23,7 +24,11 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+    // delaunay
     ofxDelaunay triangulation;
+    
+    // voronoi
+    ofxVoronoi voronoi;
     
     // gui
     ofxPanel panel;
@@ -31,4 +36,7 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> showDelaunayWireframe;
     ofParameter<bool> showDelaunayVertices;
     ofParameter<bool> showDelaunayCenter;
+    ofParameter<bool> showVoronoi;
+    
+    bool showGui;
 };

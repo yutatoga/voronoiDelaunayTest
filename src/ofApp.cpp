@@ -4,12 +4,26 @@
 void ofApp::setup(){
     ofEnableSmoothing();
     ofBackground(0);
+
+    // voronoi
+    voronoi.setBounds(ofGetWindowRect());
     
     // add random 5 points
     for (int i = 0; i < 5; i++) {
-        triangulation.addPoint(ofPoint(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight())));
+        ofPoint instantPoint(ofRandom(0, ofGetWidth()), ofRandom(0, ofGetHeight()));
+        
+        // delaunay
+        triangulation.addPoint(instantPoint);
+        
+        // voronoi
+        voronoi.addPoint(instantPoint);
     }
+    
+    // delaunay
     triangulation.triangulate();
+    
+    // voronoi
+    voronoi.generate();
     
     // gui
     panel.setup();
@@ -17,6 +31,9 @@ void ofApp::setup(){
     panel.add(showDelaunayWireframe.set("showDelaunayWireframe", true));
     panel.add(showDelaunayVertices.set("showDelaunayVertices", true));
     panel.add(showDelaunayCenter.set("showDelaunayCenter", true));
+    panel.add(showVoronoi.set("showVoronoi", true));
+    
+    showGui = true;
 }
 
 //--------------------------------------------------------------
@@ -53,7 +70,7 @@ void ofApp::draw(){
         glPointSize(1.0);
         ofSetColor(255);
     }
-
+    
     // draw centers of the mesh
     if (showDelaunayCenter) {
         ofSetColor(0, 255, 0, 255);
@@ -73,8 +90,11 @@ void ofApp::draw(){
         ofSetColor(255);
     }
     
+    // vornoi
+    if (showVoronoi) voronoi.draw();
+    
     // gui
-    panel.draw();
+    if (showGui) panel.draw();
     
     // debug
     ofDrawBitmapString("'r' to reset", ofPoint(10,20));
@@ -82,8 +102,15 @@ void ofApp::draw(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    if(key == 'r'){
-        triangulation.reset();
+    switch (key) {
+        case 'r':
+            triangulation.reset();
+            break;
+        case 'h':
+            showGui = !showGui;
+            break;
+        default:
+            break;
     }
 }
 
@@ -109,8 +136,14 @@ void ofApp::mousePressed(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-    triangulation.addPoint(ofPoint(x,y));
+    // delaunay
+    triangulation.addPoint(ofPoint(x, y));
     triangulation.triangulate();
+    
+    // voronoi
+    voronoi.getCells().clear();
+    voronoi.addPoint(ofPoint(x, y));
+    voronoi.generate();
 }
 
 //--------------------------------------------------------------
